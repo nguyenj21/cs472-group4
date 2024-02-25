@@ -1,30 +1,56 @@
 /*
   - Alec Him (ChatGPT Lab)
-  - Complex Algorithm - Sum of Array
+  - Complex Algorithm - Matrix Multiplication
 */
 
 #include <iostream>
 
-/* @brief Takes an array of numbers, squares the elements, and then returns the sum of the values.
- * @param numbers - The array of integers to be used.
- * @param arraySize - The number of elements in the array.
- * @return The sum of squares.
- */
-int sumOfSquares(int numbers[], int arraySize){
-    int sum = 0;
-    for(int i = 0; i < arraySize; ++i){
-        sum += numbers[i] * numbers[i];
+using namespace std;
+
+template <size_t rows, size_t cols>
+void matrixMult(int (&mat1)[rows][cols], int (&mat2)[rows][cols], int (&result)[rows][cols]){
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            result[i][j] = 0;
+            for(int k = 0; k < cols; k++){
+                result[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
     }
-    return sum;
+}
+
+template <size_t rows, size_t cols>
+void display(int (&matrix)[rows][cols]){
+    cout << "---------" << endl;
+    for(int i = 0; i < rows; i++){
+        cout << "|";
+        for(int j = 0; j < cols; j++){
+            cout << " " << matrix[i][j] << " |";
+        }
+        cout << endl;
+    }
+    cout << "---------" << endl;
 }
 
 int main(){
-    // Array of integers to be sorted
-    int numbers[] = {6, 2, 27, 24, 12, 22, 41, 19, 38, 31, 46, 35, 15, 10, 30};
-    // Calculate the number of elements in the array
-    int arraySize = sizeof(numbers) / sizeof(numbers[0]);
+    int matrix1[2][2] = { {1, 0},
+                          {0, 1} };
+    int matrix2[2][2] = { {2, 0},
+                          {0, 2} };
 
-    std::cout << "The sum of squares for the array is " << sumOfSquares(numbers, arraySize) << std::endl;
+    const int col1 = sizeof(matrix1[0]) / sizeof(matrix1[0][0]);
+    const int row2 = sizeof(matrix2) / sizeof(matrix2[0]);
+                           
+    // Check if the number of columns in matrix1 is equal to the number of rows in matrix2
+    if (col1 != row2) {
+        cout << "The # of columns in matrix 1 is not equal to the # of rows in matrix 2. Unable to perform multiplication" << endl;
+    } else {
+        int result[col1][row2];
+        cout << "Performing Calculation..." << endl;
+        matrixMult(matrix1, matrix2, result);
+        cout << "The value of the multiplication is: " << endl;
+        display(result);
+    }
 
     return 0;
 }
