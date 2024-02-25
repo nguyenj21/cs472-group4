@@ -1,0 +1,68 @@
+name: Shipping Crate CI Workflow
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: python:3.9-slim
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Lint with Flake8
+        run: |
+          flake8 src --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 src --count --max-complexity=10 --max-line-length=127 --statistics
+      - name: Run unit tests with nose
+        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=src
+      - name: SonarQube analysis
+        run: |
+          # Replace <SONAR_TOKEN> and <SONAR_PROJECT_KEY> with your SonarQube token and project key
+          sonar-scanner \
+            -Dsonar.projectKey=<SONAR_PROJECT_KEY> \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=<SONARQUBE_URL> \
+            -Dsonar.login=<SONAR_TOKEN>
+
+# Original Code Snippet: Shipping Crate
+# This program calculates the volume, surface area, and diagonal of a shipping crate and storage space,
+# and determines the total number of crates that can fit in the storage space.
+
+# Including the library for standard input/output stream
+# Including the library for input/output manipulators
+# Including the library for math functions
+# Declaring variables for dimensions of shipping crate and storage space
+# Declaring variables for volume, surface area, and diagonal of crate and space
+
+# Prompting user for dimensions of the shipping crate
+# Taking input for crate dimensions
+# Calculating volume of the crate
+# Calculating surface area of the crate
+# Calculating diagonal of the crate
+
+# Prompting user for dimensions of the storage space
+# Taking input for storage space dimensions
+# Calculating volume of the storage space
+# Calculating surface area of the storage space
+# Calculating diagonal of the storage space
+
+# Calculating total number of crates that can fit in the storage space
+
+# Outputting the table header
+
+# Outputting data for the shipping crate
+# Outputting data for the storage space
+
+# Outputting the table footer
+
+# Outputting the total number of crates that can fit in the storage space
+
+# Return: 0 if the program executes successfully
