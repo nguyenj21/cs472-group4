@@ -8,17 +8,13 @@
 /* @brief Takes an array of numbers, squares the elements, and then returns the sum of the values.
  * @param numbers - The array of integers to be used.
  * @param arraySize - The number of elements in the array.
+ * @return The sum of squares.
  */
 int sumOfSquares(int numbers[], int arraySize){
-    int tmp[arraySize];
-    for(int i = 0; i < arraySize; i++){
-        tmp[i] = numbers[i] * numbers[i];
-    }
     int sum = 0;
-    for(int i = 0; i < arraySize; i++){
-        sum += tmp[i];
+    for(int i = 0; i < arraySize; ++i){
+        sum += numbers[i] * numbers[i];
     }
-
     return sum;
 }
 
