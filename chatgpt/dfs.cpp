@@ -1,210 +1,117 @@
-#include <bits/stdc++.h>
-#include <vertex.hpp>
-///---------------------------------------------------------
-/// func: DFS()
-/// @param unordered_map Police Station Map to traverse
-/// @param unordered_map Keys  
-/// @return true if found exit, false if exit cannot be found
-///---------------------------------------------------------
-bool DFS(std::unordered_map<std::string, vertex<std::string>>& map, 
-		 std::unordered_map<std::string, std::vector<std::string>>& keys);
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <unordered_map>
+#include <vector>
+#include "vertex.hpp" // Assuming vertex.hpp is in the same directory
 
-///---------------------------------------------------------
-/// func: crossEdges()
-/// @param unordered_map Police Station Map to traverse
-/// @param unordered_map Keys  
-/// @return true if found exit, false if exit cannot be found
-/// @note The work.
-///---------------------------------------------------------
-std::string crossEdges(std::string current,
-				std::unordered_map<std::string, vertex<std::string>>& map, 
-		 		std::unordered_map<std::string, std::vector<std::string>>& keys,
-				std::unordered_map<std::string, bool>& visited);
+// Function prototypes
+bool DFS(std::unordered_map<std::string, vertex<std::string>>& map,
+         std::unordered_map<std::string, std::vector<std::string>>& keys);
 
-int main()
-{
-	//----------------------
-	// load police station map
-	//----------------------
-	std::ifstream police_station;
-    bool valid_file = false;
-    std::string str;
-    while (!valid_file) {
+std::string crossEdges(const std::string& current,
+                       std::unordered_map<std::string, vertex<std::string>>& map,
+                       std::unordered_map<std::string, std::vector<std::string>>& keys,
+                       std::unordered_map<std::string, bool>& visited);
 
-        std::cout << "Police Station File: ";
-        std::cin >> str;
-        police_station.open(str);
-        
-        if (police_station.is_open()) { // check if valid file
-            valid_file = true; // awesome
-        }else {
-            police_station.clear();
+int main() {
+    std::string fileName;
+
+    // Load police station map
+    std::ifstream policeStationFile;
+    do {
+        std::cout << "Enter the police station file name: ";
+        std::cin >> fileName;
+        policeStationFile.open(fileName);
+    } while (!policeStationFile.is_open());
+
+    // Construct the graph
+    std::unordered_map<std::string, vertex<std::string>> map;
+    std::string line;
+    while (std::getline(policeStationFile, line)) {
+        std::istringstream iss(line);
+        std::string key, value;
+        if (iss >> key >> value) {
+            map[key].addEdge(value);
+            map[value].addEdge(key);
         }
-	}
+    }
+    policeStationFile.close();
 
-	//----------------------
-	// constructing the graph
-	//----------------------
-	std::unordered_map<std::string, vertex<std::string>> map;
-	std::stringstream ss;
-	str.clear();
-	while (!police_station.eof()) {
+    // Get the key locations
+    std::unordered_map<std::string, std::vector<std::string>> keys;
+    do {
+        std::cout << "Enter the keys file name: ";
+        std::cin >> fileName;
+        policeStationFile.open(fileName);
+    } while (!policeStationFile.is_open());
 
-		std::string kee;
-		std::string value;
-
-		std::getline(police_station, str, '\n');
-		ss.clear();
-		if (!str.empty()) {
-			ss << str;
-			ss >> kee; // key
-			ss >> value; // value
-			map[kee].addEdge(value); // adding edge to the nodes
-			map[value].addEdge(kee); // do it 2x because the graph is undirected
-		}
-
-	}
-	police_station.close();
-
-	//----------------------
-	// get the key locations
-	//----------------------
-	std::unordered_map<std::string, std::vector<std::string>> keys;
-    valid_file = false;
-    str.clear();
-    while (!valid_file) {
-
-        std::cout << "Keys File: ";
-        std::cin >> str;
-        police_station.open(str);
-        
-        if (police_station.is_open()) { // check if valid file
-            valid_file = true; // awesome
-        }else {
-            police_station.clear();
+    while (std::getline(policeStationFile, line)) {
+        std::istringstream iss(line);
+        std::string key, value1, value2;
+        if (iss >> key >> value1 >> value2) {
+            keys[key].emplace_back(value1);
+            keys[key].emplace_back(value2);
         }
-	}
-	
-	while (!police_station.eof()) {
+    }
+    policeStationFile.close();
 
-		std::string kee;
-		std::string value;
+    // Initiate graph traversal using Depth First Search
+    bool success = DFS(map, keys);
 
-		std::getline(police_station, str, '\n');
-		ss.clear();
-		if (!str.empty()) {
-			ss << str;
-			ss >> kee;
-			ss >> value;
+    if (success) {
+        std::cout << "Congratulations! You escaped the police station!\n";
+    } else {
+        std::cout << "Unfortunately, you were unable to escape the police station.\n";
+    }
 
-			keys[kee].push_back(value);
-
-			value.clear();
-			ss >> value;
-
-			keys[kee].push_back(value);
-		}
-
-	}
-	police_station.close();
-
-	//----------------------
-	// initiating graph traversal using Depth First Search
-	//----------------------
-	bool success = DFS(map, keys);
-
-	if (success) {
-		std::cout << "Ok Leon, you escaped the police station, now to find Ada\n";
-	}else {
-		std::cout << "Ok Leon, your first day will be your last day on the force\n";
-	}
-
-	return 0;
+    return 0;
 }
 
-bool DFS(std::unordered_map<std::string, vertex<std::string>>& map, 
-		 std::unordered_map<std::string, std::vector<std::string>>& keys)
-{
-	std::unordered_map<std::string, bool> visited;
-	
-	// manually visit the mainhall to get starting position
-	std::string room = "MainHall";
-	visited[room] = true;
+bool DFS(std::unordered_map<std::string, vertex<std::string>>& map,
+         std::unordered_map<std::string, std::vector<std::string>>& keys) {
+    std::unordered_map<std::string, bool> visited;
+    std::string room = "MainHall";
+    visited[room] = true;
+    std::string current;
 
-	// get starting position in traversal
-	auto current_it = map[room].begin();
-	std::string current = *current_it;
+    auto currentIt = map[room].begin();
+    current = *currentIt;
 
-	bool found = false;
-	while (!found) {
+    while (current != "Exit") {
+        room = crossEdges(current, map, keys, visited);
+        if (room == "End")
+            break;
+        if (!keys[room].empty()) {
+            map[keys[room][0]].addEdge(keys[room][1]);
+            map[keys[room][1]].addEdge(keys[room][0]);
+            currentIt = map[keys[room][0]].begin();
+            keys[room].clear();
+        } else {
+            currentIt = map[room].begin();
+        }
+        current = *currentIt;
+    }
 
-		current = *current_it; // get current room
-
-		// traverse until dead end encountered
-		room = crossEdges(current, map, keys, visited);
-
-		// if found exit or hit dead end
-		if (room == "Exit") {
-
-			found = true;
-
-		}else if (room == "End") {
-
-			break;
-
-		}
-
-		// if dead end happens to be a key room
-		// add edges and go new edge
-		if (!keys[room].empty()) {
-			map[keys[room][0]].addEdge(keys[room][1]);
-			map[keys[room][1]].addEdge(keys[room][0]);
-			
-			current_it = map[keys[room][0]].begin();
-			keys[room].clear();
-
-		}else {
-			// try another edge from parent node
-			current_it = map[room].begin();
-		}
-		
-
-		
-	}
-
-	return found;
+    return current == "Exit";
 }
 
-std::string crossEdges(std::string current,
-				std::unordered_map<std::string, vertex<std::string>>& map, 
-		 		std::unordered_map<std::string, std::vector<std::string>>& keys,
-				std::unordered_map<std::string, bool>& visited)
-{
-	// === base case ===
-	if (current == "Exit") return "Exit";
+std::string crossEdges(const std::string& current,
+                       std::unordered_map<std::string, vertex<std::string>>& map,
+                       std::unordered_map<std::string, std::vector<std::string>>& keys,
+                       std::unordered_map<std::string, bool>& visited) {
+    visited[current] = true;
 
-	// mark visited
-	visited[current] = true;
+    if (!keys[current].empty())
+        return current;
 
-	// if its a key room, go back and unlock doors
-	if (!keys[current].empty()) return current;
+    for (auto& neighbor : map[current]) {
+        if (!visited[neighbor]) {
+            std::string result = crossEdges(neighbor, map, keys, visited);
+            if (result != "End")
+                return result;
+        }
+    }
 
-	/// === general case ===
-	std::string str = "End";
-	for (auto begin = map[current].begin(); begin != map[current].end(); begin++) {
-
-		if (visited[*begin]) continue; 
-		
-		// traverse until dead end reached
-		str = crossEdges(*begin, map, keys, visited);
-
-		// return dead end to parent
-		if (str != "End") {
-			return str;
-		}
-		
-	}
-	
-	// return if no escape
-	return str;
+    return "End";
 }
