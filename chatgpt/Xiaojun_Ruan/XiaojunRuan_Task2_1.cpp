@@ -1,29 +1,43 @@
 #include <iostream>
 
-int main() {
-    double length = 5;
-    double width = 4;
-    double height = 3;
+double calculateRectangleArea(double length, double width) {
+    return length * width;
+}
 
-    double area = length * width;
-    double perimeter = 2 * (length + width);
-    double volumn = length * width * height;
+double calculateRectanglePerimeter(double length, double width) {
+    return 2 * (length + width);
+}
 
+double calculateRectangleVolume(double length, double width, double height) {
+    return length * width * height;
+}
+
+void printRectangleInformation(double area, double perimeter, double volume) {
     std::cout << "Rectangle Area: " << area << std::endl;
     std::cout << "Rectangle Perimeter: " << perimeter << std::endl;
-    std::cout << "Rectangle Volumn: " << volumn << std::endl;
+    std::cout << "Rectangle Volume: " << volume << std::endl;
+}
 
-    length = 6;
-    width = 9;
-    height = 10;
+int main() {
+    double length1 = 5;
+    double width1 = 4;
+    double height1 = 3;
 
-    double second_area = length * width;
-    double second_perimeter = 2 * (length + width);
-    double second_volume = length * width * height;
+    double area1 = calculateRectangleArea(length1, width1);
+    double perimeter1 = calculateRectanglePerimeter(length1, width1);
+    double volume1 = calculateRectangleVolume(length1, width1, height1);
 
-    std::cout << "Rectangle Area: " << second_area << std::endl;
-    std::cout << "Rectangle Perimeter: " << second_perimeter << std::endl;
-    std::cout << "Rectangle Volume: " << second_volume << std::endl;
+    printRectangleInformation(area1, perimeter1, volume1);
+
+    double length2 = 6;
+    double width2 = 9;
+    double height2 = 10;
+
+    double area2 = calculateRectangleArea(length2, width2);
+    double perimeter2 = calculateRectanglePerimeter(length2, width2);
+    double volume2 = calculateRectangleVolume(length2, width2, height2);
+
+    printRectangleInformation(area2, perimeter2, volume2);
 
     return 0;
 }
