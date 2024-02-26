@@ -1,3 +1,5 @@
+import math
+
 def factorial(n):
     """
     Calculate the factorial of a non-negative integer.
@@ -13,10 +15,7 @@ def factorial(n):
     """
     if n < 0:
         raise ValueError("Factorial is not defined for negative numbers")
-    fact = 1
-    for i in range(1, n + 1):
-        fact *= i
-    return fact
+    return math.factorial(n)
 
 def main():
     """
@@ -24,10 +23,13 @@ def main():
     """
     try:
         num = int(input("Enter a non-negative integer: "))
-        result = factorial(num)
-        print("Factorial of", num, "is", result)
+        if num < 0:
+            print("Factorial is not defined for negative numbers")
+        else:
+            result = factorial(num)
+            print("Factorial of", num, "is", result)
     except ValueError as ve:
-        print("Error:", ve)
+        print("Error: Invalid input. Please enter a valid non-negative integer.")
 
 if __name__ == "__main__":
     main()
