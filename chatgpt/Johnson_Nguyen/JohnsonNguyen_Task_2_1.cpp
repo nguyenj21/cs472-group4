@@ -1,8 +1,15 @@
-    void foo() { 
-        unsigned char * buffer = new unsigned char[1000]; 
-     
-        // ... do something non-trivial with the buffer 
-        // but no return from the function... 
-     
-        delete[] buffer; 
-    } 
+# Function to calculate factorial of a number
+def factorial(n):
+    fact = 1
+    for i in range(1, n + 1):
+        fact = fact * i
+    return fact
+
+# Main function
+def main():
+    num = int(input("Enter a number: "))
+    result = factorial(num)
+    print("Factorial of", num, "is", result)
+
+# Call the main function
+main()
