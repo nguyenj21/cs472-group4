@@ -1,126 +1,96 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <vector>
+
 using namespace std;
 
-//constant for magic number error
-const int TENK = 10000, TWO = 2 , ONEHUNDRED = 100;
+const int MAX_ELEMENTS = 100;
 
-int main()
-{
+int main() {
     ifstream fin; 
     string fileName;
-    int increment = 0;
-    int error = 0;
-    double array[ONEHUNDRED] = {};
-    double fileNumber = 0;
+    double fileNumber;
+    vector<double> dataArray;
     double sum = 0;
-    //asking user for a file name
-    cout << "Enter a file name" << "\n" << "**";
-    //entering the fileName as a string 
+    int error = 0;
+
+    // Asking user for a file name
+    cout << "Enter a file name: ";
     cin >> fileName;
-    //opening the file
+    cout << endl;
+
+    // Opening the file
     fin.open(fileName);
-    cout << endl;
-    //If the user puts the wrong file name or invalid name
-    cout << setprecision(TWO) << fixed;
-    while(!fin.is_open())
-    {
-        //Ask the user to enter another file name
+
+    // Checking if the file is opened successfully
+    while (!fin.is_open()) {
         cout << "Error: Invalid file name." << endl;
-        //Reasking the user to enter a file name
-        cout << "Enter a file name" << "\n" << "**";
-        //get file name from user
+        cout << "Enter a file name: ";
         cin >> fileName;
-        //open file name
-        fin.open(fileName);
         cout << endl;
+        fin.open(fileName);
     }
-    while(!fin.eof())
-    {
-        //reading in the data from the file and checking
-        fin >> fileNumber;
-        //if there is an error
-        if(fin.fail())
-        {
-            //clear error
-            fin.clear();
-            //ignore error
-            fin.ignore(TENK,'\n');
-            //add 1 to error counter to keep track
-            error++;
-        }
-        else
-        {
-            array[increment] = fileNumber;
-            //finding the sum 
-            sum = sum + fileNumber;
-            //adding an increment for every time it goes through else
-            increment++;
-        }
+
+    // Reading data from the file
+    while (fin >> fileNumber) {
+        dataArray.push_back(fileNumber);
+        sum += fileNumber;
     }
-    //closing file
+
+    // Closing the file
     fin.close();
-    for (int i = 1; i < error; i++)
-    {
-        cout << "Error: Invalid input in file." << endl;
+
+    // Displaying error if any
+    error = MAX_ELEMENTS - dataArray.size();
+    if (error > 0) {
+        cout << "Error: " << error << " invalid input(s) in file." << endl;
     }
-    cout << endl;
-    //display the valid inputs
-    cout << "Amount of Elements Read In: " << increment << endl;
-    //displaying the forwards data
+
+    // Displaying the number of elements read in
+    cout << "Amount of Elements Read In: " << dataArray.size() << endl;
+
+    // Displaying data forwards
     cout << "Forwards: ";
-    for(int i = 0; i < increment; i++)
-    {
-        //print the value of array
-        cout << array[i];
-        //printing out the commas
-        if(i + 1 != increment)
-        {
+    for (size_t i = 0; i < dataArray.size(); ++i) {
+        cout << dataArray[i];
+        if (i + 1 != dataArray.size()) {
             cout << ", ";
         }
     }
     cout << endl;
-    //displaying the data backwards
+
+    // Displaying data backwards
     cout << "Backwards: ";
-    for(int i = increment - 1; i >= 0; i--)
-    {
-        //print the value of array
-        cout << array[i];
-        //printing out the commas 
-        if(i > 0)
-        {
+    for (int i = dataArray.size() - 1; i >= 0; --i) {
+        cout << dataArray[i];
+        if (i != 0) {
             cout << ", ";
         }
     }
     cout << endl;
-    double minimum = array[0];
-    //loop for checking for minimum
-    for(int i = 1; i < increment; i++)
-    {
-        if(array[i] < minimum)
-        {
-            //setting minimum = the array[i] if
-            //the if statement is true
-            minimum = array[i];
+
+    // Finding and displaying minimum
+    double minimum = dataArray[0];
+    for (size_t i = 1; i < dataArray.size(); ++i) {
+        if (dataArray[i] < minimum) {
+            minimum = dataArray[i];
         }
     }
     cout << "Minimum: " << minimum << endl;
-    double maximum = array[0];
-    //loop for checking for maximum
-    for(int i = 1; i < increment; i++)
-    {
-        if(array[i] > maximum)
-        {
-            //setting maximum = array[i] if
-            //the if statement is true
-            maximum = array[i];
+
+    // Finding and displaying maximum
+    double maximum = dataArray[0];
+    for (size_t i = 1; i < dataArray.size(); ++i) {
+        if (dataArray[i] > maximum) {
+            maximum = dataArray[i];
         }
     }
-    //show the maximum 
     cout << "Maximum: " << maximum << endl;
-    //show the sum
+
+    // Displaying sum and average
     cout << "Sum: " << sum << endl;
-    //show the average, while also finding the average
-    cout << "Average: " << sum / increment;
+    cout << "Average: " << fixed << setprecision(2) << sum / dataArray.size() << endl;
+
+    return 0;
 }
