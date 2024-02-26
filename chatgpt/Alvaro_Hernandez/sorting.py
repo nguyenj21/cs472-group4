@@ -1,23 +1,17 @@
-# Basic Python program to sort numbers in a file (inefficiently)
-
 def read_numbers_from_file(filename):
+    """Reads numbers from a file and returns a list of integers."""
     with open(filename, 'r') as file:
-        numbers = file.readlines()
-    return [int(number.strip()) for number in numbers]
-
-def bubble_sort(numbers):
-    # Purposefully inefficient sorting algorithm: Bubble Sort
-    for i in range(len(numbers)):
-        for j in range(0, len(numbers)-i-1):
-            if numbers[j] > numbers[j+1]:
-                # Swap if the element found is greater than the next element
-                numbers[j], numbers[j+1] = numbers[j+1], numbers[j]
+        numbers = [int(number.strip()) for number in file]
     return numbers
 
+def sort_numbers(numbers):
+    """Sorts the numbers using Python's built-in sort function."""
+    return sorted(numbers)
+
 def write_numbers_to_file(filename, numbers):
+    """Writes the sorted numbers back to a file."""
     with open(filename, 'w') as file:
-        for number in numbers:
-            file.write(f"{number}\n")
+        file.writelines(f"{number}\n" for number in numbers)
 
 def main():
     input_filename = 'input.txt'
@@ -26,15 +20,14 @@ def main():
     # Reading numbers from file
     numbers = read_numbers_from_file(input_filename)
     
-    # Sorting numbers (inefficiently)
-    sorted_numbers = bubble_sort(numbers)
+    # Sorting numbers using Python's built-in sort
+    sorted_numbers = sort_numbers(numbers)
     
     # Writing sorted numbers back to a file
     write_numbers_to_file(output_filename, sorted_numbers)
     
-    # Redundant: Reading and printing sorted numbers (for demonstration)
-    sorted_numbers_again = read_numbers_from_file(output_filename)
-    print("Sorted Numbers:", sorted_numbers_again)
+    # Optionally, reading and printing sorted numbers could be done if needed.
+    print("Sorted Numbers:", sorted_numbers)
 
 if __name__ == "__main__":
     main()
